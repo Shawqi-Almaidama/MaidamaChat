@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaidamaChat</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .custom-height {
+            height: calc(100vh - 200px);
+        }
+        .message-container {
+            max-width: 75%;
+            word-wrap: break-word;
+            position: relative;
+            padding: 12px;
+            border-radius: 10px;
+        }
+        .copy-btn {
+            display: block;
+            margin-top: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .dark-mode {
+            background: #121212;
+            color: white;
+        }
+        .dark-mode .copy-btn {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .dark-mode .theme-toggle {
+            background: #f1c40f;
+            color: black;
+        }
+        .dark-mode .message-container {
+            background: #333;
+            color: white;
+        }
+        .dark-mode #chat-box {
+            background: #222;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-100 text-gray-800 relative">
+
+    <!-- زر تبديل الثيم -->
+    <button id="theme-toggle" class="theme-toggle">🌙 تبديل الثيم</button>
+
+    <!-- عنوان الصفحة -->
+    <div class="text-center mt-4">
+        <h1 class="text-2xl font-semibold">مرحبًا بك في MaidamaChat</h1>
+    </div>
+
+    <div class="container mx-auto p-4">
+        <div id="chat-box" class="bg-white w-[150vh] p-4 rounded-lg shadow-lg custom-height overflow-y-auto mb-16">
+            <div class="flex justify-end mb-2">
+                <div class="message-container bg-gray-200 text-gray-800 relative">
+                    👾 مرحبًا! كيف يمكنني مساعدتك اليوم؟
+                    <button class="copy-btn" onclick="copyText(this)">📋 نسخ</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- مربع الإدخال والنص التوضيحي -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white p-4 shadow-lg">
+            <div class="flex flex-col items-center w-[150vh]">
+                <div class="flex items-center w-full">
+                    <textarea id="user-input" placeholder="اكتب رسالتك هنا..." 
+                        class="w-full p-2 border border-gray-300 rounded-md mx-2 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                    <button onclick="sendMessage()" 
+                        class="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none">
+                        إرسال
+                    </button>
+                </div>
+                <p class="mt-2 text-gray-500 text-sm font-semibold">
+                    بني بواسطة المهندس / شوقي علي ناجي الميدمه ... قد ينتج عن الذكاء الاصطناعي بعض الأخطاء
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            let userInput = $("#user-input").val();
+            if (userInput.trim() === "") return;
+            
+            $("#chat-box").append(
+                `<div class="flex justify-start mb-2">
+                    <div class="message-container bg-blue-500 text-white relative">
+                        ${userInput}
+                        <button class="copy-btn" onclick="copyText(this)">📋 نسخ</button>
+                    </div>
+                </div>`
+            );
+            $("#user-input").val("");
+            $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+
+            $.ajax({
+                url: "/chat",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ message: userInput }),
+                success: function (data) {
+                    let response = data.response || "خطأ في استجابة البوت.";
+                    $("#chat-box").append(
+                        `<div class="flex justify-end mb-2">
+                            <div class="message-container bg-gray-200 text-gray-800 relative">
+                                👾 ${response}
+                                <button class="copy-btn" onclick="copyText(this)">📋 نسخ</button>
+                            </div>
+                        </div>`
+                    );
+                    $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+                },
+                error: function () {
+                    $("#chat-box").append(
+                        `<div class="flex justify-end mb-2">
+                            <div class="message-container bg-red-200 text-red-800 relative">
+                                ⚠️ حدث خطأ، حاول مرة أخرى.
+                            </div>
+                        </div>`
+                    );
+                    $("#chat-box").scrollTop($("#chat-box")[0].scrollHeight);
+                }
+            });
+        }
+
+        function copyText(button) {
+            let text = button.parentElement.textContent.trim().replace("📋 نسخ", "");
+            navigator.clipboard.writeText(text);
+            alert("تم النسخ!");
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle("dark-mode");
+            let theme = document.body.classList.contains("dark-mode") ? "dark" : "light";
+            localStorage.setItem("theme", theme);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            let savedTheme = localStorage.getItem("theme");
+            if (savedTheme === "dark") {
+                document.body.classList.add("dark-mode");
+            }
+        });
+
+        document.getElementById("theme-toggle").addEventListener("click", toggleTheme);
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
