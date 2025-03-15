@@ -1,0 +1,8 @@
+[build]
+  functions = "functions"   # تحديد مجلد الوظائف
+  publish = "public"        # تحديد مكان الملفات الثابتة مثل HTML, CSS، JS
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

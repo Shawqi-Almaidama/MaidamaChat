@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
+from flask import Response
 
 # تهيئة API Key
 API_KEY = "AIzaSyDwdzbCrSJjWXMvUQ0e-KO52bYdd71w4_s"
@@ -37,6 +38,9 @@ def chat():
         print(f"❌ خطأ داخلي: {str(e)}")  # طباعة الخطأ في Terminal
         return jsonify({"error": "حدث خطأ داخلي، يرجى المحاولة لاحقًا"}), 500
 
-if __name__ == "__main__":
-    app.run(debug=True)
+# دالة Netlify Functions لتشغيل التطبيق
+def handler(request):
+    # يستخدم Netlify Functions لتوجيه الطلبات إلى تطبيق Flask
+    return app(request)
+
 
