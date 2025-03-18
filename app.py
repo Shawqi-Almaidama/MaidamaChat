@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 
 # الحصول على API Key من متغيرات البيئة بدلاً من تضمينه في الكود
-API_KEY = os.getenv("API_KEY")
+API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("❌ لم يتم العثور على API Key في متغيرات البيئة.")
 
