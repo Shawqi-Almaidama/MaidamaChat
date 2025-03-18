@@ -29,15 +29,13 @@
             transition: background 0.3s ease;
         }
         .theme-toggle {
-            position: absolute;
-            top: 10px;
-            left: 20px;
             background: #333;
             color: white;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s ease;
+            font-size: 16px;
         }
         .dark-mode {
             background: #121212;
@@ -61,12 +59,10 @@
 </head>
 <body class="font-sans bg-gray-100 text-gray-800 relative">
 
-    <!-- زر تبديل الثيم -->
-    <button id="theme-toggle" class="theme-toggle">🌙</button>
-
-    <!-- عنوان الصفحة -->
-    <div class="text-center mt-4">
+    <!-- عنوان الصفحة مع زر تبديل الثيم -->
+    <div class="text-center mt-4 flex justify-center items-center space-x-2">
         <h1 class="text-2xl font-semibold">مرحبًا بك في MaidamaChat</h1>
+        <button id="theme-toggle" class="theme-toggle ml-3">🌙</button>
     </div>
 
     <div class="container mx-auto max-w-screen-lg p-4">
@@ -167,6 +163,7 @@
 
 </body>
 </html>
+
 
 
 
