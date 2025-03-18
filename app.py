@@ -1,8 +1,12 @@
+import os
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 
-# تهيئة API Key
-API_KEY = "AIzaSyDwdzbCrSJjWXMvUQ0e-KO52bYdd71w4_s"
+# الحصول على API Key من متغيرات البيئة بدلاً من تضمينه في الكود
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise ValueError("❌ لم يتم العثور على API Key في متغيرات البيئة.")
+
 genai.configure(api_key=API_KEY)
 
 # إنشاء تطبيق Flask
@@ -10,7 +14,7 @@ app = Flask(__name__)
 
 # التأكد من عمل النموذج باستخدام الإصدار الصحيح
 try:
-    model = genai.GenerativeModel("gemini-1.5-pro")  # تأكد من استخدام الإصدار الصحيح!
+    model = genai.GenerativeModel("gemini-1.5-pro")
 except Exception as e:
     print(f"❌ خطأ في تحميل النموذج: {str(e)}")
 
@@ -38,5 +42,6 @@ def chat():
         return jsonify({"error": "حدث خطأ داخلي، يرجى المحاولة لاحقًا"}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+
 
