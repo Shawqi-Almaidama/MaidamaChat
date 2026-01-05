@@ -12,7 +12,8 @@ genai.configure(api_key=API_KEY)
 app = Flask(__name__)
 
 # تحميل الموديل الصحيح
-model = genai.GenerativeModel("gemini-pro")
+model = genai.GenerativeModel("models/gemini-1.5-flash")
+
 
 @app.route("/")
 def home():
