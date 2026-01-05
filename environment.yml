@@ -1,6 +1,10 @@
-name: maidamachat-env
+name: maidamachat
+channels:
+  - defaults
 dependencies:
-  - python=3.10
+  - python=3.11
   - pip
   - pip:
-      - your-required-python-packages
+      - flask>=2.3.2
+      - google-generativeai>=0.27.0
+
