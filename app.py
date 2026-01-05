@@ -13,7 +13,8 @@ app = Flask(__name__)
 
 # تحميل الموديل الصحيح
 # تحميل الموديل الصحيح
-model = genai.GenerativeModel("models/gemini-1.5")
+model = genai.GenerativeModel("models/chat-bison-001")  # نموذج مدعوم
+
 
 
 @app.route("/")
