@@ -10,14 +10,12 @@ genai.configure(api_key=API_KEY)
 
 app = Flask(__name__)
 
-# ✅ النموذج الصحيح والحديث
-model = genai.GenerativeModel("gemini-1.5-flash")
-
+# ✅ موديل مدعوم رسميًا
+model = genai.GenerativeModel("models/text-bison-001")
 
 @app.route("/")
 def home():
     return render_template("index.html")
-
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -37,11 +35,11 @@ def chat():
 
     except Exception as e:
         print(f"❌ خطأ داخلي: {e}")
-        return jsonify({"error": str(e)}), 500
-
+        return jsonify({"error": "حدث خطأ داخلي"}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)))
+    app.run(host="0.0.0.0", port=8080)
+
 
 
 
