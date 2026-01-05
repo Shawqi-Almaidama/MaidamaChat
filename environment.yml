@@ -1,9 +1,12 @@
 name: maidamachat
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - python=3.11
   - pip
+  - setuptools
+  - wheel
   - pip:
       - flask>=2.3.2
       - google-generativeai>=0.27.0
