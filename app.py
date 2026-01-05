@@ -36,6 +36,17 @@ def chat():
     except Exception as e:
         print(f"❌ خطأ داخلي: {e}")
         return jsonify({"error": "حدث خطأ داخلي"}), 500
+@app.route("/list-models")
+def list_models():
+    try:
+        # جلب قائمة الموديلات من مكتبة google.generativeai
+        models = genai.models.list()
+        # استخرج أسماء الموديلات
+        model_names = [m["name"] for m in models["models"]]
+        # عرضها على شكل صفحة ويب بسيطة
+        return "<h2>Available Models:</h2>" + "<br>".join(model_names)
+    except Exception as e:
+        return f"<h2>Error:</h2> {e}"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
