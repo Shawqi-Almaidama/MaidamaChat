@@ -1,18 +1,18 @@
+import os
 from flask import Flask, render_template, request, jsonify
 import google.generativeai as genai
 
-# تهيئة API Key
-API_KEY = "AIzaSyDwdzbCrSJjWXMvUQ0e-KO52bYdd71w4_s"
+# قراءة المفتاح من متغيرات البيئة
+API_KEY = os.getenv("GEMINI_API_KEY")
+if not API_KEY:
+    raise ValueError("❌ لم يتم العثور على API Key")
+
 genai.configure(api_key=API_KEY)
 
-# إنشاء تطبيق Flask
 app = Flask(__name__)
 
-# التأكد من عمل النموذج باستخدام الإصدار الصحيح
-try:
-    model = genai.GenerativeModel("gemini-1.5-pro")  # تأكد من استخدام الإصدار الصحيح!
-except Exception as e:
-    print(f"❌ خطأ في تحميل النموذج: {str(e)}")
+# تحميل الموديل الصحيح
+model = genai.GenerativeModel("gemini-pro")
 
 @app.route("/")
 def home():
@@ -25,18 +25,20 @@ def chat():
         if not user_input:
             return jsonify({"error": "الرسالة فارغة"}), 400
 
-        print(f"✅ استلام رسالة: {user_input}")  # طباعة الإدخال في Terminal
-        
-        response = model.generate_content(user_input)
-        bot_response = response.text.strip() if hasattr(response, "text") else "عذرًا، لم أفهم سؤالك."
+        print(f"✅ استلام رسالة: {user_input}")
 
-        print(f"🤖 استجابة البوت: {bot_response}")  # طباعة استجابة البوت
-        
+        response = model.generate_content(user_input)
+        bot_response = response.text if response.text else "لم أتمكن من الرد."
+
+        print(f"🤖 الرد: {bot_response}")
+
         return jsonify({"response": bot_response})
+
     except Exception as e:
-        print(f"❌ خطأ داخلي: {str(e)}")  # طباعة الخطأ في Terminal
-        return jsonify({"error": "حدث خطأ داخلي، يرجى المحاولة لاحقًا"}), 500
+        print(f"❌ خطأ داخلي: {e}")
+        return jsonify({"error": "حدث خطأ داخلي"}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 8080)))
+
 
