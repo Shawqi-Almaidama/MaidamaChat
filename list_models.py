@@ -1,8 +1,12 @@
-from openai import OpenAI
+import os
+import google.generativeai as genai
 
-# تأكد أنك عندك OPENAI_API_KEY في متغيرات البيئة
-client = OpenAI()
+API_KEY = os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=API_KEY)
 
-models = client.models.list()
-for m in models.data:
-    print(m.id)
+models = genai.list_models().models
+
+print("✅ النماذج المدعومة بالضبط:")
+for m in models:
+    print(m.name)
+
