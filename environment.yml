@@ -1,4 +1,3 @@
-cat > environment.yml <<EOL
 name: maidamachat
 channels:
   - defaults
@@ -11,4 +10,3 @@ dependencies:
   - pip:
       - flask>=2.3.2
       - google-generativeai>=0.27.0
-EOL
