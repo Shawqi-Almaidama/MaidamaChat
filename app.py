@@ -2,12 +2,10 @@ import os
 from flask import Flask, render_template, request, jsonify
 from google import genai
 
-# قراءة المفتاح من متغيرات البيئة
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("❌ لم يتم العثور على API Key")
 
-# إنشاء العميل الصحيح
 client = genai.Client(api_key=API_KEY)
 
 app = Flask(__name__)
@@ -25,9 +23,8 @@ def chat():
 
         print(f"✅ استلام رسالة: {user_input}")
 
-        # ✅ الموديل الصحيح المدعوم حاليًا
         response = client.models.generate_content(
-            model="gemini-1.5-flash",
+            model="gemini-1.0-pro",
             contents=user_input
         )
 
@@ -42,6 +39,7 @@ def chat():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
 
 
 
