@@ -24,7 +24,9 @@ def home():
 @app.route("/chat", methods=["POST"])
 def chat():
     try:
-        user_input = request.json.get("message", "").strip()
+        data = request.get_json(silent=True) or {}
+        user_input = data.get("message", "").strip()
+
         if not user_input:
             return jsonify({"error": "الرسالة فارغة"}), 400
 
@@ -33,20 +35,24 @@ def chat():
             contents=user_input
         )
 
-        return jsonify({"response": response.text})
+        return jsonify({
+            "response": response.text
+        })
 
     except errors.ResourceExhausted:
         return jsonify({
-            "error": "تم استهلاك الحصة (Quota). انتظر أو فعّل Billing."
+            "error": "تم استهلاك الحصة (Quota). فعّل Billing أو انتظر."
         }), 429
 
     except errors.ClientError as e:
         return jsonify({
-            "error": f"خطأ من Gemini API: {e.message}"
+            "error": f"خطأ من Gemini API: {e}"
         }), 400
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            "error": f"خطأ داخلي: {str(e)}"
+        }), 500
 
 
 if __name__ == "__main__":
