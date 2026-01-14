@@ -24,7 +24,7 @@ def chat():
         print(f"✅ استلام رسالة: {user_input}")
 
         response = client.models.generate_content(
-            model="gemini-1.0-pro",
+            model="gemini-2.0-flash",
             contents=user_input
         )
 
@@ -39,6 +39,7 @@ def chat():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
 
 
 
