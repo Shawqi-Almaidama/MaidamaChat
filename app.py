@@ -68,6 +68,18 @@ if __name__ == "__main__":
     # استخدام PORT ديناميكي من البيئة (Railway / Heroku)
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+    # =======================================
+# Route مؤقتة لعرض الموديلات المتاحة
+# =======================================
+@app.route("/list-models")
+def list_models():
+    try:
+        models = client.models.list()  # استعراض جميع الموديلات المتاحة
+        model_names = [m["name"] for m in models]
+        return "<br>".join(model_names)  # عرض كل موديل على سطر
+    except Exception as e:
+        return f"❌ خطأ: {e}"
+
 
 
 
