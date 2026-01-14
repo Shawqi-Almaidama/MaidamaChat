@@ -30,7 +30,7 @@ def chat():
         if not user_input:
             return jsonify({"error": "الرسالة فارغة"}), 400
 
-        response = client.models.generate_content(
+        response = client.generate_content(
             model="gemini-2.0-flash",
             contents=user_input
         )
@@ -58,6 +58,7 @@ def chat():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
