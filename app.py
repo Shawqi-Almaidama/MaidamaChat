@@ -1,17 +1,16 @@
 import os
 from flask import Flask, render_template, request, jsonify
-import google.generativeai as genai
+from google import genai
 
+# قراءة المفتاح من متغيرات البيئة
 API_KEY = os.getenv("GEMINI_API_KEY")
 if not API_KEY:
     raise ValueError("❌ لم يتم العثور على API Key")
 
-genai.configure(api_key=API_KEY)
+# إنشاء العميل الصحيح
+client = genai.Client(api_key=API_KEY)
 
 app = Flask(__name__)
-
-# ✅ موديل مدعوم رسميًا
-model = genai.GenerativeModel("models/text-bison-001")
 
 @app.route("/")
 def home():
@@ -26,9 +25,13 @@ def chat():
 
         print(f"✅ استلام رسالة: {user_input}")
 
-        response = model.generate_content(user_input)
-        bot_response = response.text or "لم أتمكن من الرد."
+        # ✅ الموديل الصحيح المدعوم حاليًا
+        response = client.models.generate_content(
+            model="gemini-1.5-flash",
+            contents=user_input
+        )
 
+        bot_response = response.text.strip()
         print(f"🤖 الرد: {bot_response}")
 
         return jsonify({"response": bot_response})
@@ -36,20 +39,11 @@ def chat():
     except Exception as e:
         print(f"❌ خطأ داخلي: {e}")
         return jsonify({"error": "حدث خطأ داخلي"}), 500
-@app.route("/list-models")
-def list_models():
-    try:
-        # جلب قائمة الموديلات من مكتبة google.generativeai
-        models = genai.models.list()
-        # استخرج أسماء الموديلات
-        model_names = [m["name"] for m in models["models"]]
-        # عرضها على شكل صفحة ويب بسيطة
-        return "<h2>Available Models:</h2>" + "<br>".join(model_names)
-    except Exception as e:
-        return f"<h2>Error:</h2> {e}"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
+
+
 
 
 
