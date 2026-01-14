@@ -24,7 +24,7 @@ app = Flask(__name__)
 # ===============================
 @app.route("/")
 def home():
-    return render_template("index.html")  # تأكد أن ملف index.html موجود داخل templates/
+    return render_template("index.html")  # تأكد أن index.html موجود داخل templates/
 
 # ===============================
 # 💬 واجهة الدردشة
@@ -38,9 +38,6 @@ def chat():
 
         print(f"✅ استلام رسالة من المستخدم: {user_input}")
 
-        # ===============================
-        # 🧠 استدعاء Gemini API
-        # ===============================
         response = client.models.generate_content(
             model="gemini-2.0-flash",  # ← تأكد أن هذا الموديل متاح في حسابك
             contents=user_input
@@ -52,33 +49,32 @@ def chat():
         return jsonify({"response": bot_response})
 
     except genai.exceptions.GenAIError as ge:
-        # أخطاء خاصة بمكتبة genai
         print(f"❌ خطأ في Gemini API: {ge}")
         return jsonify({"error": "حدث خطأ أثناء الاتصال بـ Gemini API"}), 500
 
     except Exception as e:
-        # أي أخطاء عامة
         print(f"❌ خطأ داخلي في السيرفر: {e}")
         return jsonify({"error": "حدث خطأ داخلي في السيرفر"}), 500
 
-# ===============================
-# 🔹 تشغيل التطبيق
-# ===============================
-if __name__ == "__main__":
-    # استخدام PORT ديناميكي من البيئة (Railway / Heroku)
-    port = int(os.environ.get("PORT", 8080))
-    app.run(host="0.0.0.0", port=port)
-    # =======================================
+# =======================================
 # Route مؤقتة لعرض الموديلات المتاحة
 # =======================================
 @app.route("/list-models")
 def list_models():
     try:
-        models = client.models.list()  # استعراض جميع الموديلات المتاحة
+        models = client.models.list()
         model_names = [m["name"] for m in models]
-        return "<br>".join(model_names)  # عرض كل موديل على سطر
+        return "<br>".join(model_names)
     except Exception as e:
         return f"❌ خطأ: {e}"
+
+# ===============================
+# 🔹 تشغيل التطبيق
+# ===============================
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host="0.0.0.0", port=port)
+
 
 
 
